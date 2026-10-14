@@ -1,0 +1,146 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-worker-ai
+  namespace: sme-toolkit-prod
+  labels:
+    app: sme-toolkit
+    component: celery-worker
+    queue: ai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sme-toolkit
+      component: celery-worker
+      queue: ai
+  template:
+    metadata:
+      labels:
+        app: sme-toolkit
+        component: celery-worker
+        queue: ai
+    spec:
+      containers:
+      - name: celery-worker
+        image: ghcr.io/nusabyte-my/sme-toolkit/backend:latest
+        imagePullPolicy: Always
+        command: ["celery", "-A", "app.queue.celery_app", "worker", "--loglevel=info", "-Q", "ai_llm,ai_image,ai_video"]
+        envFrom:
+        - configMapRef:
+            name: sme-toolkit-config
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: sme-toolkit-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: sme-toolkit-secrets
+              key: redis-url
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: sme-toolkit-secrets
+              key: gemini-api-key
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-worker-default
+  namespace: sme-toolkit-prod
+  labels:
+    app: sme-toolkit
+    component: celery-worker
+    queue: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sme-toolkit
+      component: celery-worker
+      queue: default
+  template:
+    metadata:
+      labels:
+        app: sme-toolkit
+        component: celery-worker
+        queue: default
+    spec:
+      containers:
+      - name: celery-worker
+        image: ghcr.io/nusabyte-my/sme-toolkit/backend:latest
+        imagePullPolicy: Always
+        command: ["celery", "-A", "app.queue.celery_app", "worker", "--loglevel=info", "-Q", "default,analytics,notifications,scheduled,marketplace"]
+        envFrom:
+        - configMapRef:
+            name: sme-toolkit-config
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: sme-toolkit-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: sme-toolkit-secrets
+              key: redis-url
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-beat
+  namespace: sme-toolkit-prod
+  labels:
+    app: sme-toolkit
+    component: celery-beat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sme-toolkit
+      component: celery-beat
+  template:
+    metadata:
+      labels:
+        app: sme-toolkit
+        component: celery-beat
+    spec:
+      containers:
+      - name: celery-beat
+        image: ghcr.io/nusabyte-my/sme-toolkit/backend:latest
+        imagePullPolicy: Always
+        command: ["celery", "-A", "app.queue.celery_app", "beat", "--loglevel=info"]
+        envFrom:
+        - configMapRef:
+            name: sme-toolkit-config
+        env:
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: sme-toolkit-secrets
+              key: redis-url
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi

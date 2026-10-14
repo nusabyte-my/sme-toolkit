@@ -1,0 +1,144 @@
+{
+  "name": "SME Toolkit - WhatsApp Reply Approvals",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wa-reply-drafts",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "wa-draft-webhook",
+      "name": "WA Draft Intake",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c1",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.body.kind }}",
+              "rightValue": "whatsapp_reply_draft"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "filter-drafts",
+      "name": "Is Reply Draft",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/auth/token",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "username",
+              "value": "={{ $env.N8N_USER }}"
+            },
+            {
+              "name": "password",
+              "value": "={{ $env.N8N_PASSWORD }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-token",
+      "name": "Get Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"received\": true,\n  \"draft_id\": \"{{ $execution.id }}-{{ $itemIndex }}\",\n  \"to\": \"{{ $json.body.to }}\",\n  \"routed\": \"{{ $json.body.routed_domain }}\",\n  \"note\": \"Draft parked for owner approval in dashboard. Nothing sent to customer.\"\n}",
+        "options": {}
+      },
+      "id": "ack-draft",
+      "name": "Ack Draft",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        220
+      ]
+    }
+  ],
+  "connections": {
+    "WA Draft Intake": {
+      "main": [
+        [
+          {
+            "node": "Is Reply Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Reply Draft": {
+      "main": [
+        [
+          {
+            "node": "Get Token",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Get Token": {
+      "main": [
+        [
+          {
+            "node": "Ack Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all"
+  },
+  "meta": {
+    "description": "Receives HITL WhatsApp reply drafts from the SME-toolkit WA bridge. Set WA_DASHBOARD_CALLBACK to this webhook's production URL. Owner approves in dashboard; approved sends go through wa-router /api/v1/send."
+  },
+  "active": false,
+  "tags": [
+    "sme-toolkit",
+    "whatsapp",
+    "hitl"
+  ]
+}

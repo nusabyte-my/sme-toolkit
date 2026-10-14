@@ -1,0 +1,129 @@
+{
+  "name": "SME Toolkit - Business Canvas Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-canvas",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "canvas-trigger",
+      "name": "Canvas Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/auth/token",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "username",
+              "value": "={{ $env.N8N_USER }}"
+            },
+            {
+              "name": "password",
+              "value": "={{ $env.N8N_PASSWORD }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "auth",
+      "name": "Get Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/webhook/canvas",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"description\": \"{{ $node['Canvas Request'].json.description }}\",\n    \"mode\": \"{{ $node['Canvas Request'].json.mode || 'quick' }}\",\n    \"enhance\": {{ $node['Canvas Request'].json.enhance || true }}\n  },\n  \"sync\": true\n}",
+        "options": {}
+      },
+      "id": "generate-canvas",
+      "name": "Generate Canvas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.result) }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Return Canvas",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        850,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Canvas Request": {
+      "main": [
+        [
+          {
+            "node": "Get Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Token": {
+      "main": [
+        [
+          {
+            "node": "Generate Canvas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Canvas": {
+      "main": [
+        [
+          {
+            "node": "Return Canvas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

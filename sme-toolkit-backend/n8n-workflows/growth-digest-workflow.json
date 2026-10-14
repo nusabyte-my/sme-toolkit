@@ -1,0 +1,173 @@
+{
+  "name": "SME Toolkit - Growth Digest (Weekly)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": 1,
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "schedule-weekly-digest",
+      "name": "Every Monday 8am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/auth/token",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "username",
+              "value": "={{ $env.N8N_USER }}"
+            },
+            {
+              "name": "password",
+              "value": "={{ $env.N8N_PASSWORD }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-auth-token",
+      "name": "Get Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/webhook/strategy",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"business_context\": \"Weekly growth digest request. Produce a short Monday briefing for the SME owner: 3 priorities for this week, 1 metric to watch, 1 thing to stop doing. Base it on the workspace's current strategy data. Keep it under 150 words, plain language, no invented numbers.\",\n    \"advice_type\": \"INSIGHTS\",\n    \"enhance\": false\n  }\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "generate-digest",
+      "name": "Generate Weekly Digest",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        300
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"digest\": {{ JSON.stringify($json.result ? $json.result.content || $json.result : $json) }},\n  \"generated_at\": \"{{ $now.toISO() }}\",\n  \"note\": \"Draft only — appears in the owner's dashboard for review. Never auto-sent to customers.\"\n}",
+        "options": {}
+      },
+      "id": "return-digest",
+      "name": "Return Digest",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        220
+      ],
+      "webhookId": "growth-digest-response"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"error\": \"Digest generation failed — check backend logs for the strategy agent error.\",\n  \"generated_at\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "id": "return-error",
+      "name": "Return Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        400
+      ],
+      "webhookId": "growth-digest-error"
+    }
+  ],
+  "connections": {
+    "Every Monday 8am": {
+      "main": [
+        [
+          {
+            "node": "Get Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Token": {
+      "main": [
+        [
+          {
+            "node": "Generate Weekly Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Weekly Digest": {
+      "main": [
+        [
+          {
+            "node": "Return Digest",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all"
+  },
+  "staticData": null,
+  "meta": {
+    "description": "GrowthAgent weekly digest. Cron-triggered; HITL by design — output lands as a draft for human review, never auto-published or auto-emailed."
+  },
+  "active": false,
+  "tags": [
+    "sme-toolkit",
+    "growth-agent",
+    "draft-only"
+  ]
+}

@@ -1,0 +1,55 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment — never commit credentials
+.env
+.env.local
+.env.*.local
+
+# Private local databases, media, and migration backups
+sme-toolkit-backend/*.db
+sme-toolkit-backend/*.db-*
+sme-toolkit-backend/*.db.*.bak
+.local-backups/
+
+# Python (backend)
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Local tool state and caches
+.codegraph/
+.omo/
+.omx/
+.hallmark/
+.jebat/
+.claude/settings.local.json
+
+# Local export artifacts
+sme-growth-toolkit.zip

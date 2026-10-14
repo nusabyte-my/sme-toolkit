@@ -1,0 +1,58 @@
+# Core Framework
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# LangChain/LangGraph
+langchain>=0.3.0
+langgraph>=0.2.0
+langchain-google-genai>=2.0.0
+
+# Google AI
+google-generativeai>=0.8.0
+
+# Optional AI Providers (install for fallback support)
+groq>=0.4.0
+mistralai>=0.1.0
+replicate>=0.25.0
+# stability-sdk>=0.8.0  # Uncomment if using Stability AI
+openai>=1.0.0  # For DeepSeek (uses OpenAI-compatible API)
+
+# Async Support
+httpx>=0.26.0
+aiofiles>=23.2.0
+
+# Database (SQLite for job queue)
+sqlalchemy>=2.0.0
+aiosqlite>=0.19.0
+
+# Authentication
+python-jose[cryptography]>=3.3.0
+cryptography>=42.0.0
+passlib[bcrypt]>=1.7.4
+
+# Utilities
+python-dotenv>=1.0.0
+python-multipart>=0.0.6
+tzdata>=2026.1
+
+# Payments
+stripe>=9.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+httpx>=0.26.0
+
+# Performance & Monitoring
+redis>=5.0.0
+prometheus-client>=0.19.0
+
+# Code Quality
+black>=23.12.0
+flake8>=7.0.0
+mypy>=1.8.0
+isort>=5.13.0

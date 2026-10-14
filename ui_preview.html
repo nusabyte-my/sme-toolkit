@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SME Toolkit UI/UX Improvements Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #0891b2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .stat-card-1 { background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); }
+        .stat-card-2 { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
+        .stat-card-3 { background: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%); }
+        .stat-card-4 { background: linear-gradient(135deg, #4338ca 0%, #0e7490 100%); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-12 text-slate-900">SME Toolkit UI/UX Improvements Preview</h1>
+
+        <!-- Landing Page Preview -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-slate-800 border-b-2 border-indigo-200 pb-2">Landing Page Enhancements</h2>
+
+            <!-- Enhanced Navigation Preview -->
+            <div class="bg-slate-900 rounded-xl p-8 mb-8">
+                <h3 class="text-2xl font-bold text-white mb-4">🎨 Enhanced Navigation</h3>
+                <div class="bg-slate-800 rounded-lg p-6">
+                    <nav class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold">
+                                🏢
+                            </div>
+                            <span class="text-white font-bold text-xl">SME Toolkit</span>
+                        </div>
+                        <div class="flex gap-4">
+                            <button class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors">Login</button>
+                            <button class="px-6 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-lg font-bold hover:from-indigo-500 hover:to-cyan-500 transition-all">
+                                Get Started →
+                            </button>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Testimonials Preview -->
+            <div class="bg-white rounded-xl p-8 mb-8 shadow-lg">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">🌟 Enhanced Testimonials</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-100 rounded-lg p-6 border border-slate-200">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
+                                    SJ
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900">Sarah Johnson</h4>
+                                    <p class="text-sm text-slate-600">Founder, EcoCraft</p>
+                                </div>
+                            </div>
+                            <div class="flex text-yellow-400">
+                                ⭐⭐⭐⭐⭐
+                            </div>
+                        </div>
+                        <p class="text-slate-700 text-sm">"SME Toolkit transformed our business strategy. The AI insights are incredibly accurate and actionable."</p>
+                    </div>
+                    <div class="bg-slate-100 rounded-lg p-6 border border-slate-200">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
+                                    MC
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900">Michael Chen</h4>
+                                    <p class="text-sm text-slate-600">CEO, TechStart</p>
+                                </div>
+                            </div>
+                            <div class="flex text-yellow-400">
+                                ⭐⭐⭐⭐⭐
+                            </div>
+                        </div>
+                        <p class="text-slate-700 text-sm">"The unified dashboard saved us 20+ hours per week. It's like having a full growth team in one tool."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Stats Preview -->
+            <div class="bg-slate-900 rounded-xl p-8">
+                <h3 class="text-2xl font-bold text-white mb-4">📊 Enhanced Statistics</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="stat-card-1 rounded-xl p-6 text-white card-hover">
+                        <div class="text-2xl mb-2">👤</div>
+                        <div class="text-3xl font-bold">10,000+</div>
+                        <div class="text-sm opacity-90 flex items-center gap-2">
+                            Active Users
+                            <span class="text-emerald-400 text-xs">▲ 25%</span>
+                        </div>
+                        <div class="mt-3 h-1 bg-white/20 rounded-full">
+                            <div class="h-1 bg-white/50 rounded-full w-3/4"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card-2 rounded-xl p-6 text-white card-hover">
+                        <div class="text-2xl mb-2">📈</div>
+                        <div class="text-3xl font-bold">300%</div>
+                        <div class="text-sm opacity-90 flex items-center gap-2">
+                            Avg. Growth
+                            <span class="text-emerald-400 text-xs">▲ 40%</span>
+                        </div>
+                        <div class="mt-3 h-1 bg-white/20 rounded-full">
+                            <div class="h-1 bg-white/50 rounded-full w-full"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card-3 rounded-xl p-6 text-white card-hover">
+                        <div class="text-2xl mb-2">⏱️</div>
+                        <div class="text-3xl font-bold">50h+</div>
+                        <div class="text-sm opacity-90 flex items-center gap-2">
+                            Saved Monthly
+                            <span class="text-emerald-400 text-xs">▲ 35%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card-4 rounded-xl p-6 text-white card-hover">
+                        <div class="text-2xl mb-2">⭐</div>
+                        <div class="text-3xl font-bold">4.9/5</div>
+                        <div class="text-sm opacity-90 flex items-center gap-2">
+                            User Rating
+                            <span class="text-cyan-400 text-xs">➡️ Stable</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Preview -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-slate-800 border-b-2 border-indigo-200 pb-2">Dashboard Enhancements</h2>
+
+            <!-- Enhanced Header Preview -->
+            <div class="bg-white rounded-xl p-8 mb-8 shadow-lg">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">👤 Enhanced Dashboard Header</h3>
+                <div class="bg-slate-50 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <div class="flex items-center gap-4">
+                                <h1 class="text-2xl font-bold text-slate-900">Good morning, John!</h1>
+                                <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                                    J
+                                </div>
+                            </div>
+                            <p class="text-slate-600 mt-2">Here's your business growth overview and AI-powered insights</p>
+                            <div class="flex gap-3 mt-4">
+                                <span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">👤 Profile: 85%</span>
+                                <span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">🏢 Business: 92% - Excellent</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button class="relative w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
+                                🔔
+                                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full">3</span>
+                            </button>
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                                🔄 Refresh Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Dashboard Stats Preview -->
+            <div class="bg-white rounded-xl p-8">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">📈 Enhanced Dashboard Stats</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="stat-card-1 rounded-xl p-6 text-white card-hover relative">
+                        <div class="absolute top-2 right-2 opacity-0 hover:opacity-100">
+                            <div class="bg-slate-900 text-white text-xs rounded px-2 py-1">Complete profile for all AI features</div>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm opacity-90 mb-1">Profile Completion</p>
+                                <p class="text-3xl font-bold">85%</p>
+                                <p class="text-xs text-emerald-400">▲ 5%</p>
+                            </div>
+                            <div class="text-3xl">👤</div>
+                        </div>
+                        <div class="mt-3 h-1 bg-white/20 rounded-full">
+                            <div class="h-1 bg-white/50 rounded-full w-4/5"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card-2 rounded-xl p-6 text-white card-hover relative">
+                        <div class="absolute top-2 right-2 opacity-0 hover:opacity-100">
+                            <div class="bg-slate-900 text-white text-xs rounded px-2 py-1">Excellent business positioning!</div>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm opacity-90 mb-1">Business Score</p>
+                                <p class="text-3xl font-bold">92%</p>
+                                <p class="text-xs text-emerald-400">▲ 10%</p>
+                            </div>
+                            <div class="text-3xl">📈</div>
+                        </div>
+                        <div class="mt-3 h-1 bg-white/20 rounded-full">
+                            <div class="h-1 bg-white/50 rounded-full w-11/12"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card-3 rounded-xl p-6 text-white card-hover relative">
+                        <div class="absolute top-2 right-2 opacity-0 hover:opacity-100">
+                            <div class="bg-slate-900 text-white text-xs rounded px-2 py-1">Connect more social profiles</div>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm opacity-90 mb-1">Social Profiles</p>
+                                <p class="text-3xl font-bold">3</p>
+                                <p class="text-xs text-emerald-400">▲ 2</p>
+                            </div>
+                            <div class="text-3xl">📱</div>
+                        </div>
+                    </div>
+                    <div class="stat-card-4 rounded-xl p-6 text-white card-hover relative">
+                        <div class="absolute top-2 right-2 opacity-0 hover:opacity-100">
+                            <div class="bg-slate-900 text-white text-xs rounded px-2 py-1">AI insights are active</div>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm opacity-90 mb-1">Active Insights</p>
+                                <p class="text-3xl font-bold">Yes</p>
+                                <p class="text-xs text-cyan-400">➡️ Stable</p>
+                            </div>
+                            <div class="text-3xl">💡</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="text-center py-12">
+            <h2 class="text-3xl font-bold mb-6 text-slate-800">🎉 UI/UX Improvements Summary</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold mb-4 text-slate-800">🎨 Visual Enhancements</h3>
+                    <ul class="text-left text-slate-600 space-y-2">
+                        <li>• Gradient color schemes</li>
+                        <li>• Smooth animations</li>
+                        <li>• Consistent spacing</li>
+                        <li>• Modern typography</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold mb-4 text-slate-800">💡 Interactive Elements</h3>
+                    <ul class="text-left text-slate-600 space-y-2">
+                        <li>• Hover tooltips</li>
+                        <li>• Dropdown menus</li>
+                        <li>• Notification system</li>
+                        <li>• User avatar menu</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold mb-4 text-slate-800">📊 Data Visualization</h3>
+                    <ul class="text-left text-slate-600 space-y-2">
+                        <li>• Trend indicators</li>
+                        <li>• Progress bars</li>
+                        <li>• Status badges</li>
+                        <li>• Rating systems</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="text-lg text-slate-600 mb-6 max-w-3xl mx-auto">
+                The enhanced UI/UX provides a more professional, engaging, and intuitive experience while maintaining all core functionality.
+            </p>
+            <button class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:from-indigo-500 hover:to-purple-500 transition-all shadow-lg hover:shadow-xl">
+                🚀 Experience the Enhanced Interface
+            </button>
+        </section>
+    </div>
+</body>
+</html>

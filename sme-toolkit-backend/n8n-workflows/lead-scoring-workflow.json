@@ -1,0 +1,248 @@
+{
+  "name": "SME Toolkit - Lead Scoring Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "new-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "New Lead Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/auth/token",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "username",
+              "value": "={{ $env.N8N_USER }}"
+            },
+            {
+              "name": "password",
+              "value": "={{ $env.N8N_PASSWORD }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-auth-token",
+      "name": "Get Auth Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/webhook/leads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"action\": \"score\",\n  \"data\": {\n    \"lead\": {\n      \"name\": \"{{ $node['New Lead Webhook'].json.name }}\",\n      \"company\": \"{{ $node['New Lead Webhook'].json.company }}\",\n      \"email\": \"{{ $node['New Lead Webhook'].json.email }}\",\n      \"status\": \"{{ $node['New Lead Webhook'].json.status || 'New' }}\",\n      \"engagement\": \"{{ $node['New Lead Webhook'].json.engagement || 'Medium' }}\",\n      \"notes\": \"{{ $node['New Lead Webhook'].json.notes || '' }}\"\n    }\n  },\n  \"sync\": true\n}",
+        "options": {}
+      },
+      "id": "score-lead",
+      "name": "Score Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.result.score }}",
+              "operation": "largerEqual",
+              "value2": 70
+            }
+          ]
+        }
+      },
+      "id": "check-score",
+      "name": "High Score?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        850,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/webhook/leads",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $node['Get Auth Token'].json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"action\": \"email\",\n  \"data\": {\n    \"lead\": {\n      \"name\": \"{{ $node['New Lead Webhook'].json.name }}\",\n      \"company\": \"{{ $node['New Lead Webhook'].json.company }}\",\n      \"email\": \"{{ $node['New Lead Webhook'].json.email }}\",\n      \"notes\": \"{{ $node['New Lead Webhook'].json.notes || '' }}\"\n    },\n    \"tone\": \"Professional\"\n  },\n  \"sync\": true\n}",
+        "options": {}
+      },
+      "id": "generate-email",
+      "name": "Generate Cold Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1050,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "status",
+              "value": "low_priority"
+            },
+            {
+              "name": "score",
+              "value": "={{ $node['Score Lead'].json.result.score }}"
+            },
+            {
+              "name": "suggestions",
+              "value": "={{ $node['Score Lead'].json.result.suggestions }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "low-priority",
+      "name": "Mark Low Priority",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        1050,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"lead\": {\n    \"name\": \"{{ $node['New Lead Webhook'].json.name }}\",\n    \"score\": {{ $node['Score Lead'].json.result.score }},\n    \"suggestions\": \"{{ $node['Score Lead'].json.result.suggestions }}\",\n    \"email_generated\": {{ $node['Generate Cold Email'] ? true : false }}\n  }\n}",
+        "options": {}
+      },
+      "id": "respond-success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1250,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "New Lead Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Auth Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Auth Token": {
+      "main": [
+        [
+          {
+            "node": "Score Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score Lead": {
+      "main": [
+        [
+          {
+            "node": "High Score?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "High Score?": {
+      "main": [
+        [
+          {
+            "node": "Generate Cold Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Low Priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Cold Email": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Low Priority": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,198 @@
+{
+  "name": "SME Toolkit - Content Generation Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-content",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "content-trigger",
+      "name": "Content Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/auth/token",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "username",
+              "value": "={{ $env.N8N_USER }}"
+            },
+            {
+              "name": "password",
+              "value": "={{ $env.N8N_PASSWORD }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "auth",
+      "name": "Authenticate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/webhook/copywriter",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"topic\": \"{{ $node['Content Request'].json.topic }}\",\n    \"format\": \"{{ $node['Content Request'].json.format || 'Social Media Post' }}\",\n    \"tone\": \"{{ $node['Content Request'].json.tone || 'Professional' }}\",\n    \"target_audience\": \"{{ $node['Content Request'].json.audience || '' }}\",\n    \"variation_count\": {{ $node['Content Request'].json.variations || 3 }},\n    \"enhance\": true\n  },\n  \"sync\": true\n}",
+        "options": {}
+      },
+      "id": "generate-copy",
+      "name": "Generate Marketing Copy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        650,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/webhook/visual",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $node['Authenticate'].json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"action\": \"generate\",\n  \"data\": {\n    \"prompt\": \"{{ $node['Content Request'].json.visual_prompt || $node['Content Request'].json.topic }}\",\n    \"style\": \"{{ $node['Content Request'].json.style || 'Photorealistic' }}\",\n    \"aspect_ratio\": \"{{ $node['Content Request'].json.aspect_ratio || '1:1' }}\",\n    \"enhance\": true\n  },\n  \"sync\": true\n}",
+        "options": {}
+      },
+      "id": "generate-visual",
+      "name": "Generate Visual",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        650,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge-results",
+      "name": "Merge Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        850,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"content\": {\n    \"copy\": {{ JSON.stringify($node['Generate Marketing Copy'].json.result.variations) }},\n    \"visual\": \"{{ $node['Generate Visual'].json.result.image ? 'Generated' : 'Failed' }}\",\n    \"enhanced_topic\": \"{{ $node['Generate Marketing Copy'].json.result.enhanced_topic || '' }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Return Results",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Content Request": {
+      "main": [
+        [
+          {
+            "node": "Authenticate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Authenticate": {
+      "main": [
+        [
+          {
+            "node": "Generate Marketing Copy",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate Visual",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Marketing Copy": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Visual": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Results": {
+      "main": [
+        [
+          {
+            "node": "Return Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

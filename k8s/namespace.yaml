@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sme-toolkit-prod
+  labels:
+    name: sme-toolkit-prod
+    environment: production
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sme-toolkit-secrets
+  namespace: sme-toolkit-prod
+type: Opaque
+stringData:
+  database-url: "postgresql+asyncpg://smeuser:password@postgres-service:5432/sme_toolkit"
+  redis-url: "redis://redis-service:6379/0"
+  # Populated by CI/CD from GitHub Secrets — see .github/workflows/deploy.yml
+  gemini-api-key: ""
+  groq-api-key: ""
+  mistral-api-key: ""
+  deepseek-api-key: ""
+  replicate-api-key: ""
+  # Generate via: openssl rand -hex 32
+  jwt-secret-key: ""
+  # Generate via: openssl rand -hex 32
+  encryption-master-key: ""
+  stripe-secret-key: ""
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sme-toolkit-config
+  namespace: sme-toolkit-prod
+data:
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
+  ENABLE_METRICS: "true"
+  DB_POOL_SIZE: "20"
+  DB_MAX_OVERFLOW: "10"
+  REDIS_MAX_CONNECTIONS: "50"

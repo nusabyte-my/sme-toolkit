@@ -1,0 +1,18 @@
+# robots.txt for SME Toolkit
+# Allow all user agents to crawl the site
+User-agent: *
+
+# Disallow admin and backend paths
+Disallow: /admin
+Disallow: /api
+Disallow: /backend
+Disallow: /private
+
+# Allow all other paths
+Allow: /
+
+# Crawl delay to prevent overloading the server
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://sme-toolkit.com/sitemap.xml
